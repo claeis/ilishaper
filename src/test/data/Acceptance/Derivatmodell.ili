@@ -1,0 +1,52 @@
+INTERLIS 2.3;
+
+MODEL Derivatmodell (de)
+AT "https://agi.so.ch"
+VERSION "2022-11-24"  =
+  IMPORTS GeometryCHLV95_V1;
+
+  TOPIC TopicT1 =
+    OID AS INTERLIS.UUIDOID;
+
+    /** Klasse A
+     */
+    CLASS ClassA =
+       /** Hallo Welt.
+        */
+      !!@foo=bar
+       Attr2 : MANDATORY 0 .. 5000;
+       /** Fubar
+        */
+       Attr3 : MANDATORY GeometryCHLV95_V1.Coord2;
+       /** Heute heisse ich immer noch gleich.
+       */
+       Attr4 : TEXT*16;
+       /** Enum zum Filtern
+       */
+       Attr5 : MANDATORY (rot,blau);
+     END ClassA;
+
+  END TopicT1;
+
+  TOPIC TopicT3 =
+    OID AS INTERLIS.UUIDOID;
+
+    CLASS ClassD =
+      AttrD1 : MANDATORY TEXT*16;
+    END ClassD;
+
+    CLASS ClassE =
+      AttrE1 : MANDATORY TEXT*16;
+    END ClassE;
+
+    CLASS ClassF =
+      AttrF1 : MANDATORY TEXT*16;
+    END ClassF;
+
+    CLASS ClassG =
+      AttrG1 : MANDATORY TEXT*16;
+    END ClassG;
+
+  END TopicT3;
+
+END Derivatmodell.

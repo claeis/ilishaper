@@ -1,0 +1,17 @@
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Eclipse
+.settings
+.project
+.classpath
+bin
+
+# Ignore Gradle build output directory
+build
+
+# macOS
+.DS_Store
+
+*~
+/user.properties

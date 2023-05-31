@@ -1,0 +1,22 @@
+language: java
+  
+branches:
+  only:
+    - main
+    - stable
+
+install: true
+  
+script: 
+  - ./gradlew build 
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: ./gradlew -Drepos_pwd=${repos_pwd} -Drepos_usr=jql_jars-INTE uploadArchives
+    on:
+      branch: main
+  - provider: script
+    skip_cleanup: true
+    script: ./gradlew -Drepos_pwd=${repos_pwd} -Drepos_usr=jql_jars-INTE '-Drelease=' -Ddownloads_pwd=${downloads_pwd} -Ddownloads_usr=jql_downloads uploadArchives uploadBin
+    on:
+      branch: stable
