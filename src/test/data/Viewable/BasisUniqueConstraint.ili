@@ -1,0 +1,21 @@
+INTERLIS 2.3;
+
+MODEL BasisUniqueConstraint (de)
+AT "mailto:ceis@localhost"
+VERSION "2023-06-22"  =
+
+  TOPIC TopicT1 =
+
+    CLASS ClassA =
+      Attr1 : MANDATORY TEXT*16;
+    END ClassA;
+
+    CLASS ClassB =
+      Attr1 : MANDATORY TEXT*16;
+      Attr2 : MANDATORY TEXT*16;
+      UNIQUE Attr1,Attr2;
+    END ClassB;
+    
+  END TopicT1;
+
+END BasisUniqueConstraint.

@@ -1,0 +1,24 @@
+INTERLIS 2.3;
+
+MODEL BasisAssociation (de)
+AT "mailto:ceis@localhost"
+VERSION "2023-06-22"  =
+
+  TOPIC TopicT1 =
+
+    CLASS ClassA =
+      Attr1 : MANDATORY TEXT*16;
+    END ClassA;
+
+    CLASS ClassB =
+      Attr1 : MANDATORY TEXT*16;
+    END ClassB;
+    
+    ASSOCIATION AssocC =
+      a -- ClassA;
+      b -- ClassB;
+    END AssocC;
+  
+  END TopicT1;
+
+END BasisAssociation.

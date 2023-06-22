@@ -111,7 +111,7 @@ Optionen:
 +=============================================+========================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================+
 | ``--createModel``                           | Erstellt ein neues Modell (ili-Datei). Zwingende weitere Angaben: Konfigurationsdatei (``--config``) und Ausgabedatei (``--out``)                                                                                                                                                                                                                                                                                                                                                                                                      |
 +---------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| ``--deriveData``                            | Erstellt ein neue, reduzierte Daten-Datei (xtf-Datei). Zwingende weitere Angaben: Quelldatei (``file``), Konfigurationsdatei (``--config``) und Ausgabedatei (``--out``)                                                                                                                                                                                                                                                                                                                                                              |
+| ``--deriveData``                            | Erstellt ein neue, reduzierte Daten-Datei (xtf-Datei). Zwingende weitere Angaben: Quelldatei (``file``), Konfigurationsdatei (``--config``) und Ausgabedatei (``--out``)                                                                                                                                                                                                                                                                                                                                                               |
 +---------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | ``--modeldir path``                         | Dateipfade, die Modell-Dateien (ili-Dateien) enthalten. Mehrere Pfade können durch Semikolon ‚;‘ getrennt werden. Es sind auch URLs von Modell-Repositories möglich. Default ist                                                                                                                                                                                                                                                                                                                                                       |
 |                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
@@ -144,7 +144,7 @@ Optionen:
 
 Konfiguration
 -------------
-Die muss in einer Konfigurations-Datei definiert werden.
+Die Abbildung muss in einer Konfigurations-Datei definiert werden.
 
 Um z.B. ein Attribut abzustreifen
 schreibt man in der INI-Datei:
@@ -158,3 +158,103 @@ INI-Konfigurationsdatei
 `Beispiel1.ini`_
 
 .. _Beispiel1.ini: Beispiel1.ini
+
++------------------+--------------------------+-----------------------------------------------------------------------------------+
+| Modelelement     | Konfiguartion            | Beschreibung                                                                      |
++==================+==========================+===================================================================================+
+| ModelDef         | ::                       | Definiert den Namen des neu zu erstellenden Modells                               |
+|                  |                          |                                                                                   |
+|                  |  name                    |                                                                                   |
+|                  |                          |                                                                                   |
+|                  |                          | Beispiel                                                                          |
+|                  |                          |                                                                                   |
+|                  |                          | ::                                                                                |
+|                  |                          |                                                                                   |
+|                  |                          |   [Basismodell]                                                                   |
+|                  |                          |   name=Derivatmodell                                                              |
+|                  |                          |                                                                                   |
++------------------+--------------------------+-----------------------------------------------------------------------------------+
+| ModelDef         | ::                       | Definiert den Herausgeber des neu zu erstellenden Modells. Das muss eine URI sein.|
+|                  |                          |                                                                                   |
+|                  |  issuer                  |                                                                                   |
+|                  |                          |                                                                                   |
+|                  |                          | Beispiel                                                                          |
+|                  |                          |                                                                                   |
+|                  |                          | ::                                                                                |
+|                  |                          |                                                                                   |
+|                  |                          |   [Basismodell]                                                                   |
+|                  |                          |   issuer=mailto:user@host                                                         |
+|                  |                          |                                                                                   |
++------------------+--------------------------+-----------------------------------------------------------------------------------+
+| ModelDef         | ::                       | Definiert die Angabe zur VERSION des neu zu erstellenden Modells.                 |
+|                  |                          |                                                                                   |
+|                  |  version                 |                                                                                   |
+|                  |                          |                                                                                   |
+|                  |                          | Beispiel                                                                          |
+|                  |                          |                                                                                   |
+|                  |                          | ::                                                                                |
+|                  |                          |                                                                                   |
+|                  |                          |   [Basismodell]                                                                   |
+|                  |                          |   version=1.0                                                                     |
+|                  |                          |                                                                                   |
++------------------+--------------------------+-----------------------------------------------------------------------------------+
+| ModelDef         | ::                       | Definiert die optionale Angabe Erläuterung zur VERSION des neu                    |
+|                  |                          | zu erstellenden Modells.                                                          |
+|                  |  versionExpl             |                                                                                   |
+|                  |                          |                                                                                   |
+|                  |                          | Beispiel                                                                          |
+|                  |                          |                                                                                   |
+|                  |                          | ::                                                                                |
+|                  |                          |                                                                                   |
+|                  |                          |   [Basismodell]                                                                   |
+|                  |                          |   versionExpl=Entwurf                                                             |
+|                  |                          |                                                                                   |
++------------------+--------------------------+-----------------------------------------------------------------------------------+
+| ModelDef         | ::                       | Definiert den Modell-Kommentar des neu                                            |
+|                  |                          | zu erstellenden Modells.                                                          |
+|                  |  doc                     |                                                                                   |
+|                  |                          |                                                                                   |
+|                  |                          | Beispiel                                                                          |
+|                  |                          |                                                                                   |
+|                  |                          | ::                                                                                |
+|                  |                          |                                                                                   |
+|                  |                          |   [Basismodell]                                                                   |
+|                  |                          |   doc=Kommentar zum neuen Modell                                                  |
+|                  |                          |                                                                                   |
++------------------+--------------------------+-----------------------------------------------------------------------------------+
+| TopicDef         | ::                       | Falls true wird das entsprechende Topic ignoriert.                                |
+|                  |                          |                                                                                   |
+|                  |  ignore                  |                                                                                   |
+|                  |                          |                                                                                   |
+|                  |                          | Beispiel                                                                          |
+|                  |                          |                                                                                   |
+|                  |                          | ::                                                                                |
+|                  |                          |                                                                                   |
+|                  |                          |   [Basismodell.TopicT2]                                                           |
+|                  |                          |   ignore=true                                                                     |
+|                  |                          |                                                                                   |
++------------------+--------------------------+-----------------------------------------------------------------------------------+
+| ClassDef         | ::                       | Falls true wird die entsprechende Klasse, Struktur, Assoziation                   |
+| StructureDef     |                          | oder Sicht ignoriert.                                                             |
+| AssociationDef   |  ignore                  |                                                                                   |
+| ViewDef          |                          |                                                                                   |
+|                  |                          | Beispiel                                                                          |
+|                  |                          |                                                                                   |
+|                  |                          | ::                                                                                |
+|                  |                          |                                                                                   |
+|                  |                          |   [Basismodell.TopicT2.ClassB]                                                    |
+|                  |                          |   ignore=true                                                                     |
+|                  |                          |                                                                                   |
++------------------+--------------------------+-----------------------------------------------------------------------------------+
+| AttributeDef     | ::                       | Falls true wird das entsprechende Attribut                                        |
+|                  |                          | ignoriert.                                                                        |
+|                  |  ignore                  |                                                                                   |
+|                  |                          |                                                                                   |
+|                  |                          | Beispiel                                                                          |
+|                  |                          |                                                                                   |
+|                  |                          | ::                                                                                |
+|                  |                          |                                                                                   |
+|                  |                          |   [Basismodell.TopicT2.ClassA.Attr1]                                              |
+|                  |                          |   ignore=true                                                                     |
+|                  |                          |                                                                                   |
++------------------+--------------------------+-----------------------------------------------------------------------------------+

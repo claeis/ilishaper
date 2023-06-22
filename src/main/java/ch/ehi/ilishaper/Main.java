@@ -88,6 +88,9 @@ public class Main {
             }else if (arg.equals("--out")) {
                 argi++;
                 outFile=args[argi];
+            }else if(arg.equals("--config")) {
+                argi++;
+                settings.setValue(Main.SETTING_CONFIGFILE, args[argi]);
 			}else if(arg.equals("--log")) {
 			    argi++;
 			    settings.setValue(Main.SETTING_LOGFILE, args[argi]);
@@ -281,7 +284,7 @@ public class Main {
     /** Path with folders of Interlis model files. Multiple entries are separated by semicolon (';'). 
      * Might contain "http:" URLs which should contain model repositories. 
      */
-    public static final String SETTING_ILIDIRS="ch.ehi.ilishaper.ilidirs";
+    public static final String SETTING_ILIDIRS=Ili2cSettings.ILIDIRS;
     /** the main folder of program.
      */
     public static final String SETTING_APPHOME="ch.ehi.ilishaper.appHome";

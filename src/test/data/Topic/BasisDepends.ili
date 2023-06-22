@@ -1,0 +1,17 @@
+INTERLIS 2.3;
+
+MODEL BasisDepends (de)
+AT "mailto:ceis@localhost"
+VERSION "2023-06-22"  =
+
+  TOPIC TopicT1 =
+  END TopicT1;
+
+  TOPIC TopicT2 =
+  END TopicT2;
+
+  TOPIC TopicT3 =
+  DEPENDS ON TopicT1,TopicT2;
+  END TopicT3;
+  
+END BasisDepends.

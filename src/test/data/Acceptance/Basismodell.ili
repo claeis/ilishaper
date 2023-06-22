@@ -10,6 +10,7 @@ VERSION "2022-11-24"  =
   /** Topic-ilidoc
   */
   TOPIC TopicT1 =
+    BASKET OID AS INTERLIS.UUIDOID;
     OID AS INTERLIS.UUIDOID;
 
     /** Klasse A
@@ -54,9 +55,9 @@ VERSION "2022-11-24"  =
   END TopicT2;
 
   TOPIC TopicT3 =
-    OID AS INTERLIS.UUIDOID;
 
     CLASS ClassD =
+    OID AS INTERLIS.UUIDOID;
       AttrD1 : MANDATORY TEXT*16;
     END ClassD;
 

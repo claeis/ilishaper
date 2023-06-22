@@ -1,0 +1,22 @@
+INTERLIS 2.3;
+
+MODEL BasisExtends (de)
+AT "mailto:ceis@localhost"
+VERSION "2023-06-22"  =
+
+  TOPIC TopicT1 =
+
+    CLASS ClassA =
+      Attr1 : MANDATORY TEXT*16;
+    END ClassA;
+
+    CLASS ClassB =
+      Attr1 : MANDATORY TEXT*16;
+    END ClassB;
+    
+    CLASS ClassC EXTENDS ClassB =
+    END ClassC;
+  
+  END TopicT1;
+
+END BasisExtends.
