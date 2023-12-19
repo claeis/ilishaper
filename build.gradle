@@ -4,7 +4,7 @@ plugins {
 
 }
 
-version '0.9.1'+System.getProperty('release','-SNAPSHOT')
+version '1.0.0'+System.getProperty('release','-SNAPSHOT')
 group 'ch.ehi'
 
 configurations {
@@ -33,9 +33,9 @@ compileJava.options.encoding = 'US-ASCII'
 dependencies {
     implementation group: 'ch.ehi', name: 'ehibasics', version: '1.4.1'
     implementation group: 'ch.interlis', name: 'iox-api', version: '1.0.4'
-    implementation group: 'ch.interlis', name: 'iox-ili', version: '1.21.13'
-    implementation group: 'ch.interlis', name: 'ili2c-tool', version: "5.3.3+"
-    implementation group: 'ch.interlis', name: 'ili2c-core', version: "5.3.3+"
+    implementation group: 'ch.interlis', name: 'iox-ili', version: '1.22.0'
+    implementation group: 'ch.interlis', name: 'ili2c-tool', version: "5.4.0"
+    implementation group: 'ch.interlis', name: 'ili2c-core', version: "5.4.0"
 
     testImplementation 'junit:junit:4.12'
     testImplementation group: 'ch.interlis', name: 'ilivalidator', version: "1.12.1"
