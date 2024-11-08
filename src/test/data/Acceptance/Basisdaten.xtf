@@ -9,7 +9,7 @@
     </MODELS>
   </HEADERSECTION>
   <DATASECTION>
-    <Basismodell.TopicT1 BID="b1">
+    <Basismodell.TopicT1 BID="1e3bb69f-9c01-4748-9385-476281017d73">
       <Basismodell.TopicT1.ClassA TID="6d3158bf-fff6-4df6-98a5-088dfcdb514c">
         <Attr1>0795551234</Attr1>
         <Attr2>4999</Attr2>

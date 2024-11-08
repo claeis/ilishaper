@@ -6,7 +6,6 @@ VERSION "2022-11-24"  =
   IMPORTS GeometryCHLV95_V1;
 
   TOPIC TopicT1 =
-    OID AS INTERLIS.UUIDOID;
 
     /** Klasse A
      */
@@ -29,7 +28,7 @@ VERSION "2022-11-24"  =
   END TopicT1;
 
   TOPIC TopicT3 =
-    OID AS INTERLIS.UUIDOID;
+    !!OID AS INTERLIS.UUIDOID;
 
     CLASS ClassD =
       AttrD1 : MANDATORY TEXT*16;
@@ -38,6 +37,11 @@ VERSION "2022-11-24"  =
     CLASS ClassE =
       AttrE1 : MANDATORY TEXT*16;
     END ClassE;
+    
+    ASSOCIATION D_E_Assoz =
+      rD -<> {1} Derivatmodell.TopicT3.ClassD;
+      rE -- {0..*} Derivatmodell.TopicT3.ClassE;
+    END D_E_Assoz;
 
     CLASS ClassF =
       AttrF1 : MANDATORY TEXT*16;
@@ -46,6 +50,11 @@ VERSION "2022-11-24"  =
     CLASS ClassG =
       AttrG1 : MANDATORY TEXT*16;
     END ClassG;
+    
+    ASSOCIATION F_G_Assoz =
+      rF -- {0..*} Derivatmodell.TopicT3.ClassF;
+      rG -- {0..*} Derivatmodell.TopicT3.ClassG;
+    END F_G_Assoz;
 
   END TopicT3;
 

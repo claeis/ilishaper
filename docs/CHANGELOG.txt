@@ -1,5 +1,6 @@
-ilishaper 1.0.0 (2023-12-XX)
+ilishaper 1.0.0 (2024-11-XX)
 -------------------------------
+- support --deriveData
 - ili2c-5.4.0
 - iox-ili-1.22.0
 

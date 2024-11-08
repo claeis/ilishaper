@@ -4,6 +4,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.settings.Settings;
@@ -68,7 +69,53 @@ public class IliGenerator extends ch.interlis.ili2c.generator.Interlis2Generator
                 }
             }
         }
+        collectSkipElements(skipElements,td,srcModels,trafoConfig);
         generate(out, td, false);
+    }
+    public static void collectSkipElements(Set<Element> skipElements, TransferDescription td, List<Model> srcModels,ValidationConfig trafoConfig) {
+        for(Iterator<Model> modelIt=td.iterator();modelIt.hasNext();){
+            Model model=modelIt.next();
+            collectSkipElements_Helper(skipElements, model, trafoConfig);
+        }
+    }
+    private static void collectSkipElements_Helper(Set<Element> skipElements, ch.interlis.ili2c.metamodel.Element elt,ValidationConfig trafoConfig) {
+        String scopedName=elt.getScopedName();
+        if(elt instanceof AttributeDef && ValidationConfig.TRUE.equals(trafoConfig.getConfigValue(elt.getScopedName(), CONFIG_IGNORE))) {
+            skipElements.add(elt);
+        }else if(elt instanceof Topic) {
+            if(ValidationConfig.TRUE.equals(trafoConfig.getConfigValue(scopedName, CONFIG_IGNORE))) {
+                skipElements.add(elt);
+                skipTopicElements(skipElements,(Topic)elt);
+            }else {
+                Topic topic=(Topic)elt;
+                if(skipElements.contains(topic.getExtending())) {
+                    skipElements.add(elt);
+                    skipTopicElements(skipElements,(Topic)elt);
+                }
+            }
+        }else if(elt instanceof Viewable) {
+            if(ValidationConfig.TRUE.equals(trafoConfig.getConfigValue(scopedName, CONFIG_IGNORE))) {
+                skipElements.add(elt);
+            }else {
+                Viewable viewable=(Viewable)elt;
+                if(skipElements.contains(viewable.getExtending())) {
+                    skipElements.add(elt);
+                }
+            }
+            if(elt instanceof AssociationDef && containsRolesWithSkippedClassRefs(skipElements,(AssociationDef)elt)) {
+                skipElements.add(elt);
+            }
+        }else if (elt instanceof Constraint && containsRefsWithSkippedElements(skipElements,(Constraint)elt)) {
+            skipElements.add(elt);
+        }else if(ValidationConfig.TRUE.equals(trafoConfig.getConfigValue(scopedName, CONFIG_IGNORE))) {
+            skipElements.add(elt);
+        }
+        if(elt instanceof ch.interlis.ili2c.metamodel.Container) {
+            for(Iterator<Element> it=((ch.interlis.ili2c.metamodel.Container) elt).iterator();it.hasNext();) {
+                Element el=it.next();
+                collectSkipElements_Helper(skipElements, el, trafoConfig);
+            }
+        }
     }
     @Override
     protected void printElements (Container container,String language)
@@ -92,13 +139,13 @@ public class IliGenerator extends ch.interlis.ili2c.generator.Interlis2Generator
         }else if(elt instanceof Topic) {
             if(ValidationConfig.TRUE.equals(trafoConfig.getConfigValue(scopedName, CONFIG_IGNORE))) {
                 skipElements.add(elt);
-                skipTopicElements((Topic)elt);
+                skipTopicElements(skipElements,(Topic)elt);
                 return lastClass;
             }
             Topic topic=(Topic)elt;
             if(skipElements.contains(topic.getExtending())) {
                 skipElements.add(elt);
-                skipTopicElements((Topic)elt);
+                skipTopicElements(skipElements,(Topic)elt);
                 return lastClass;
             }
         }else if(elt instanceof Viewable) {
@@ -111,11 +158,11 @@ public class IliGenerator extends ch.interlis.ili2c.generator.Interlis2Generator
                 skipElements.add(elt);
                 return lastClass;
             }
-            if(elt instanceof AssociationDef && containsRolesWithSkippedClassRefs((AssociationDef)elt)) {
+            if(elt instanceof AssociationDef && containsRolesWithSkippedClassRefs(skipElements,(AssociationDef)elt)) {
                 skipElements.add(elt);
                 return lastClass;
             }
-        }else if (elt instanceof Constraint && containsRefsWithSkippedElements((Constraint)elt)) {
+        }else if (elt instanceof Constraint && containsRefsWithSkippedElements(skipElements,(Constraint)elt)) {
             skipElements.add(elt);
             return lastClass;
         }else if(ValidationConfig.TRUE.equals(trafoConfig.getConfigValue(scopedName, CONFIG_IGNORE))) {
@@ -124,50 +171,50 @@ public class IliGenerator extends ch.interlis.ili2c.generator.Interlis2Generator
         }
         return super.printElement(container, lastClass, elt, language);
     }
-    private boolean containsRefsWithSkippedElements(Constraint elt) {
+    private static boolean containsRefsWithSkippedElements(Set<Element> skipElements,Constraint elt) {
         if(elt instanceof UniquenessConstraint) {
             UniquenessConstraint unique=(UniquenessConstraint) elt;
             UniqueEl unqEles = unique.getElements();
             for(ObjectPath path:unqEles.getAttributes()) {
-                if(containsRefsWithSkippedElements(path)) {
+                if(containsRefsWithSkippedElements(skipElements,path)) {
                     return true;
                 }
             }
             Evaluable condition = unique.getPreCondition();
-            if(containsRefsWithSkippedElements(condition)) {
+            if(containsRefsWithSkippedElements(skipElements,condition)) {
                 return true;
             }
             ObjectPath prefix = unique.getPrefix();
-            if(containsRefsWithSkippedElements(prefix)) {
+            if(containsRefsWithSkippedElements(skipElements,prefix)) {
                 return true;
             }
         }else if(elt instanceof MandatoryConstraint) {
             Evaluable condition = elt.getCondition();
-            if(containsRefsWithSkippedElements(condition)) {
+            if(containsRefsWithSkippedElements(skipElements,condition)) {
                 return true;
             }
         }else if(elt instanceof PlausibilityConstraint) {
             Evaluable condition = elt.getCondition();
-            if(containsRefsWithSkippedElements(condition)) {
+            if(containsRefsWithSkippedElements(skipElements,condition)) {
                 return true;
             }
         }else if(elt instanceof SetConstraint) {
             Evaluable condition = elt.getCondition();
-            if(containsRefsWithSkippedElements(condition)) {
+            if(containsRefsWithSkippedElements(skipElements,condition)) {
                 return true;
             }
             Evaluable preCondition = ((SetConstraint) elt).getPreCondition();
-            if(containsRefsWithSkippedElements(preCondition)) {
+            if(containsRefsWithSkippedElements(skipElements,preCondition)) {
                 return true;
             }
         }else if(elt instanceof ExistenceConstraint) {
             ObjectPath restrictedAttr = ((ExistenceConstraint) elt).getRestrictedAttribute();
-            if(containsRefsWithSkippedElements(restrictedAttr)) {
+            if(containsRefsWithSkippedElements(skipElements,restrictedAttr)) {
                 return true;
             }
             Iterator<ObjectPath> reqIt=((ExistenceConstraint) elt).iteratorRequiredIn();
             while(reqIt.hasNext()) {
-                if(containsRefsWithSkippedElements(reqIt.next())) {
+                if(containsRefsWithSkippedElements(skipElements,reqIt.next())) {
                     return true;
                 }
             }
@@ -176,105 +223,105 @@ public class IliGenerator extends ch.interlis.ili2c.generator.Interlis2Generator
         }
         return false;
     }
-    private boolean containsRefsWithSkippedElements(Evaluable ev) {
+    private static boolean containsRefsWithSkippedElements(Set<Element> skipElements,Evaluable ev) {
         if(ev==null) {
             return false;
         }
         if(ev instanceof Expression.Addition) {
-            if(containsRefsWithSkippedElements(((Expression.Addition)ev).getLeft())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.Addition)ev).getLeft())) {
                 return true;
             }
-            if(containsRefsWithSkippedElements(((Expression.Addition)ev).getRight())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.Addition)ev).getRight())) {
                 return true;
             }
         }else if(ev instanceof Expression.Conjunction) {
             for(Evaluable evN:((Expression.Conjunction) ev).getConjoined()) {
-                if(containsRefsWithSkippedElements(evN)) {
+                if(containsRefsWithSkippedElements(skipElements,evN)) {
                     return true;
                 }
             }
         }else if(ev instanceof Expression.DefinedCheck) {
-            if(containsRefsWithSkippedElements(((Expression.DefinedCheck)ev).getArgument())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.DefinedCheck)ev).getArgument())) {
                 return true;
             }
         }else if(ev instanceof Expression.Disjunction) {
             for(Evaluable evN:((Expression.Disjunction) ev).getDisjoined()) {
-                if(containsRefsWithSkippedElements(evN)) {
+                if(containsRefsWithSkippedElements(skipElements,evN)) {
                     return true;
                 }
             }
         }else if(ev instanceof Expression.Division) {
-            if(containsRefsWithSkippedElements(((Expression.Division)ev).getLeft())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.Division)ev).getLeft())) {
                 return true;
             }
-            if(containsRefsWithSkippedElements(((Expression.Division)ev).getRight())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.Division)ev).getRight())) {
                 return true;
             }
         }else if(ev instanceof Expression.Equality) {
-            if(containsRefsWithSkippedElements(((Expression.Equality)ev).getLeft())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.Equality)ev).getLeft())) {
                 return true;
             }
-            if(containsRefsWithSkippedElements(((Expression.Equality)ev).getRight())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.Equality)ev).getRight())) {
                 return true;
             }
         }else if(ev instanceof Expression.GreaterThan) {
-            if(containsRefsWithSkippedElements(((Expression.GreaterThan)ev).getLeft())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.GreaterThan)ev).getLeft())) {
                 return true;
             }
-            if(containsRefsWithSkippedElements(((Expression.GreaterThan)ev).getRight())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.GreaterThan)ev).getRight())) {
                 return true;
             }
         }else if(ev instanceof Expression.GreaterThanOrEqual) {
-            if(containsRefsWithSkippedElements(((Expression.GreaterThanOrEqual)ev).getLeft())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.GreaterThanOrEqual)ev).getLeft())) {
                 return true;
             }
-            if(containsRefsWithSkippedElements(((Expression.GreaterThanOrEqual)ev).getRight())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.GreaterThanOrEqual)ev).getRight())) {
                 return true;
             }
         }else if(ev instanceof Expression.Implication) {
-            if(containsRefsWithSkippedElements(((Expression.Implication)ev).getLeft())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.Implication)ev).getLeft())) {
                 return true;
             }
-            if(containsRefsWithSkippedElements(((Expression.Implication)ev).getRight())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.Implication)ev).getRight())) {
                 return true;
             }
         }else if(ev instanceof Expression.LessThan) {
-            if(containsRefsWithSkippedElements(((Expression.LessThan)ev).getLeft())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.LessThan)ev).getLeft())) {
                 return true;
             }
-            if(containsRefsWithSkippedElements(((Expression.LessThan)ev).getRight())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.LessThan)ev).getRight())) {
                 return true;
             }
         }else if(ev instanceof Expression.LessThanOrEqual) {
-            if(containsRefsWithSkippedElements(((Expression.LessThanOrEqual)ev).getLeft())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.LessThanOrEqual)ev).getLeft())) {
                 return true;
             }
-            if(containsRefsWithSkippedElements(((Expression.LessThanOrEqual)ev).getRight())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.LessThanOrEqual)ev).getRight())) {
                 return true;
             }
         }else if(ev instanceof Expression.Multiplication) {
-            if(containsRefsWithSkippedElements(((Expression.Multiplication)ev).getLeft())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.Multiplication)ev).getLeft())) {
                 return true;
             }
-            if(containsRefsWithSkippedElements(((Expression.Multiplication)ev).getRight())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.Multiplication)ev).getRight())) {
                 return true;
             }
         }else if(ev instanceof Expression.Negation) {
-            if(containsRefsWithSkippedElements(((Expression.Negation)ev).getNegated())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.Negation)ev).getNegated())) {
                 return true;
             }
         }else if(ev instanceof Expression.Subtraction) {
-            if(containsRefsWithSkippedElements(((Expression.Subtraction)ev).getLeft())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.Subtraction)ev).getLeft())) {
                 return true;
             }
-            if(containsRefsWithSkippedElements(((Expression.Subtraction)ev).getRight())) {
+            if(containsRefsWithSkippedElements(skipElements,((Expression.Subtraction)ev).getRight())) {
                 return true;
             }
         }else if(ev instanceof Expression) {
             throw new IllegalArgumentException("unexpected Class "+ev.getClass().getName());
         }else if(ev instanceof FunctionCall) {
             for(Evaluable evN:((FunctionCall) ev).getArguments()) {
-                if(containsRefsWithSkippedElements(evN)) {
+                if(containsRefsWithSkippedElements(skipElements,evN)) {
                     return true;
                 }
             }
@@ -283,11 +330,11 @@ public class IliGenerator extends ch.interlis.ili2c.generator.Interlis2Generator
                 return true;
             }
         }else if(ev instanceof ObjectPath) {
-            return containsObjectPathRefsWithSkippedElements((ObjectPath) ev);
+            return containsObjectPathRefsWithSkippedElements(skipElements,(ObjectPath) ev);
         }
         return false;
     }
-    protected boolean containsObjectPathRefsWithSkippedElements(ObjectPath path) {
+    protected static boolean containsObjectPathRefsWithSkippedElements(Set<Element> skipElements,ObjectPath path) {
         PathEl pathEls[]=path.getPathElements();
         for(PathEl pathEl:pathEls) {
             if(pathEl instanceof AttributeRef) {
@@ -324,7 +371,7 @@ public class IliGenerator extends ch.interlis.ili2c.generator.Interlis2Generator
         }
         return false;
     }
-    private boolean containsRolesWithSkippedClassRefs(AssociationDef assoc) {
+    private static boolean containsRolesWithSkippedClassRefs(Set<Element> skipElements,AssociationDef assoc) {
         Iterator<Element> rolei = assoc.getAttributesAndRoles();
         while (rolei.hasNext()) {
             Element obj = rolei.next();
@@ -341,7 +388,7 @@ public class IliGenerator extends ch.interlis.ili2c.generator.Interlis2Generator
         }
         return false;
     }
-    private void skipTopicElements(ch.interlis.ili2c.metamodel.Topic topic) {
+    private static void skipTopicElements(Set<Element> skipElements,ch.interlis.ili2c.metamodel.Topic topic) {
         java.util.Iterator<Element> eleIt=topic.iterator();
         while(eleIt.hasNext()) {
            Element ele=eleIt.next();
