@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.settings.Settings;
+import ch.interlis.ili2c.Ili2cException;
 import ch.interlis.ili2c.metamodel.AssociationDef;
 import ch.interlis.ili2c.metamodel.AttributeDef;
 import ch.interlis.ili2c.metamodel.CompositionType;
@@ -12,8 +14,11 @@ import ch.interlis.ili2c.metamodel.Container;
 import ch.interlis.ili2c.metamodel.Element;
 import ch.interlis.ili2c.metamodel.EnumTreeValueType;
 import ch.interlis.ili2c.metamodel.EnumerationType;
+import ch.interlis.ili2c.metamodel.Evaluable;
 import ch.interlis.ili2c.metamodel.Model;
+import ch.interlis.ili2c.metamodel.ObjectPath;
 import ch.interlis.ili2c.metamodel.ObjectType;
+import ch.interlis.ili2c.metamodel.PathEl;
 import ch.interlis.ili2c.metamodel.PredefinedModel;
 import ch.interlis.ili2c.metamodel.RoleDef;
 import ch.interlis.ili2c.metamodel.Topic;
@@ -27,10 +32,16 @@ import ch.interlis.iom_j.xtf.XtfModel;
 import ch.interlis.iox.EndBasketEvent;
 import ch.interlis.iox.EndTransferEvent;
 import ch.interlis.iox.IoxEvent;
+import ch.interlis.iox.IoxLogging;
+import ch.interlis.iox.IoxValidationConfig;
 import ch.interlis.iox.ObjectEvent;
 import ch.interlis.iox.StartBasketEvent;
 import ch.interlis.iox.StartTransferEvent;
+import ch.interlis.iox_j.PipelinePool;
+import ch.interlis.iox_j.logging.LogEventFactory;
 import ch.interlis.iox_j.validator.ValidationConfig;
+import ch.interlis.iox_j.validator.Validator;
+import ch.interlis.iox_j.validator.Value;
 
 public class XtfShaper {
 
@@ -42,6 +53,7 @@ public class XtfShaper {
     private boolean letThroughBasket=false;
     private TransferDescription td=null;
     private ValidationConfig trafoConfig=null;
+    private Validator validator=null;                
     public XtfShaper(TransferDescription td,ValidationConfig trafoConfig,Settings settings)
     {
         this.td=td;
@@ -61,6 +73,13 @@ public class XtfShaper {
                 }
                 destModels.add(destModel);
             }
+        }
+        {
+            IoxValidationConfig validationConfig=new ValidationConfig();
+            IoxLogging errs=new ch.interlis.iox_j.logging.Log2EhiLogger();
+            LogEventFactory errFact=new LogEventFactory();; 
+            PipelinePool pipelinePool=new PipelinePool();
+            validator=new Validator(td,validationConfig,errs, errFact, pipelinePool, settings);
         }
         IliGenerator.collectSkipElements(skipElements,td,srcModels,trafoConfig);
     }
@@ -175,8 +194,10 @@ public class XtfShaper {
         Viewable viewable=(Viewable)td.getElement(className);
         if(!skipElements.contains(viewable)) {
             IomObject destIomObj=translateObject(srcIomObj);
-            ObjectEvent destEvent=new ch.interlis.iox_j.ObjectEvent(destIomObj);
-            out.add(destEvent);
+            if(destIomObj!=null) {
+                ObjectEvent destEvent=new ch.interlis.iox_j.ObjectEvent(destIomObj);
+                out.add(destEvent);
+            }
         }
     }
     private long destOid=1;
@@ -185,6 +206,23 @@ public class XtfShaper {
         String srcClassName=srcIomObj.getobjecttag();
         Viewable srcClass=(Viewable)td.getElement(srcClassName);
         if(!skipElements.contains(srcClass)) {
+            {
+                String filterText=trafoConfig.getConfigValue(srcClass.getScopedName(), IliGenerator.CONFIG_VIEWABLE_FILTER);
+                Evaluable filter = null;
+                if(filterText!=null) {
+                    try {
+                        filter = ch.interlis.ili2c.Main.parseExpression(srcClass, PredefinedModel.getInstance().BOOLEAN.getType(),filterText,srcClass.getScopedName()+":"+IliGenerator.CONFIG_VIEWABLE_FILTER);
+                    } catch (Ili2cException e) {
+                        EhiLogger.logError("failed to parse filter <"+filterText+">",e);
+                    }
+                }
+                if(filter!=null) {
+                    Value result = validator.evaluateExpression(null, null, srcClassName, srcIomObj, filter, null);
+                    if (result.skipEvaluation() || !result.isTrue()) {
+                        return null; // skip it
+                    }
+                }
+            }
             String destClassName=getDestScopedName(srcClass);
             Viewable destClass=(Viewable)td.getElement(destClassName);
             if(destClass instanceof AssociationDef && !(((AssociationDef) destClass).getOid()!=null || ((AssociationDef) destClass).isIdentifiable())) {
@@ -214,13 +252,18 @@ public class XtfShaper {
                     if(!skipElements.contains(destRole)) {
                         String destRoleName = destRole.getName();
                         if(srcIomObj.getattrvaluecount(destRoleName)>0){
-                            IomObject structvalue = srcIomObj.getattrobj(destRoleName, 0);
-                            String ref=structvalue.getobjectrefoid();
+                            IomObject structValue = srcIomObj.getattrobj(destRoleName, 0);
+                            String ref=structValue.getobjectrefoid();
                             if(destModels.contains(destRole.getDestination().getContainer(Model.class))) {
                                ref=Long.toString(mapId(ref)); 
-                               structvalue.setobjectrefoid(ref);
+                               structValue.setobjectrefoid(ref);
                             }
-                            destIomObj.addattrobj(destRoleName, structvalue);
+                            if(!structValue.getobjecttag().equals(Iom_jObject.REF)) {
+                                structValue=translateObject(structValue);
+                            }
+                            if(structValue!=null) {
+                                destIomObj.addattrobj(destRoleName,structValue);
+                            }
                         }
                     }
                 }
@@ -256,9 +299,15 @@ public class XtfShaper {
                 }else{
                     IomObject structValue=(IomObject)attrValue;
                     if(isCompType){
+                        // STRUCTURE
                         structValue=translateObject(structValue);
+                        if(structValue!=null) {
+                            destIomObj.addattrobj(destAttrName,structValue);
+                        }
+                    }else {
+                        // COORD,  ...
+                        destIomObj.addattrobj(destAttrName,structValue);
                     }
-                    destIomObj.addattrobj(destAttrName,structValue);
                 }
             }
         }

@@ -57,6 +57,7 @@ public class AcceptanceTest {
 
     @Test
     public void deriveData() throws IoxException {
+        //EhiLogger.getInstance().setTraceFilter(false);
         final File destFile = new File(OUT_FOLDER,"AcceptanceTest_deriveData.xtf");
         {
             Settings settings = new Settings();
