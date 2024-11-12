@@ -39,4 +39,5 @@ To build a binary distribution, use
     * rst2html location can be provided in file _user.properties_
 
 ## Documentation
-[docs/ilishaper.rst](docs/ilishaper.rst)
+* <https://docs.interlis.ch/ilishaper/>
+* [docs/ilishaper.rst](docs/ilishaper.rst)
