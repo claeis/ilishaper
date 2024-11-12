@@ -246,6 +246,22 @@ INI-Konfigurationsdatei
 |                  |                          |   ignore=true                                                                     |
 |                  |                          |                                                                                   |
 +------------------+--------------------------+-----------------------------------------------------------------------------------+
+| ClassDef         | ::                       | Ein Ausdruck (Syntax-Regel Expression; wie bei einem Mandatory-Constraint).       |
+| StructureDef     |                          | Falls die Auswertung des Ausdrucks true ergibt, wird das entsprechende Objekt     |
+| AssociationDef   |  filter                  | in die Ausgabe kopiert, falls false (oder der Ausdruck nicht auswertbar           |
+| ViewDef          |                          | ist (z.B. Division mit 0)), wird das Objekt ignoriert.                            |
+|                  |                          |                                                                                   |
+|                  |                          | Der Ausdruck muss pro Objekt (ohne Beizug anderer Objekte) auswertbar             |
+|                  |                          | sein (darf also keine Rollen oder Referenzattribute enthalten).                   |
+|                  |                          |                                                                                   |
+|                  |                          | Beispiel                                                                          |
+|                  |                          |                                                                                   |
+|                  |                          | ::                                                                                |
+|                  |                          |                                                                                   |
+|                  |                          |   [Basismodell.TopicT1.ClassA]                                                    |
+|                  |                          |   filter="Attr5==#rot"                                                            |
+|                  |                          |                                                                                   |
++------------------+--------------------------+-----------------------------------------------------------------------------------+
 | AttributeDef     | ::                       | Falls true wird das entsprechende Attribut                                        |
 |                  |                          | ignoriert.                                                                        |
 |                  |  ignore                  |                                                                                   |

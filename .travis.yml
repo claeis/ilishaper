@@ -17,6 +17,6 @@ deploy:
       branch: main
   - provider: script
     skip_cleanup: true
-    script: ./gradlew -Drepos_pwd=${repos_pwd} -Drepos_usr=jql_jars-INTE '-Drelease=' -Ddownloads_pwd=${downloads_pwd} -Ddownloads_usr=jql_downloads uploadArchives uploadBin
+    script: ./gradlew -Drepos_pwd=${repos_pwd} -Drepos_usr=jql_jars-INTE '-Drelease=' -Ddownloads_pwd=${downloads_pwd} -Ddownloads_usr=jql_downloads -Ddocs_pwd=${docs_pwd} -Ddocs_usr=jql_docs uploadArchives uploadBin uploadDoc
     on:
       branch: stable
