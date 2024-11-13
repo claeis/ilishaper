@@ -12,7 +12,7 @@ For the current version of ilishaper, you will need a JRE (Java Runtime Environm
 The JRE (Java Runtime Environment) can be downloaded from the Website <http://www.java.com/>.
 
 ## Software Download 
-TBD
+<https://downloads.interlis.ch/ilishaper/>
 
 ## Installing ilishaper
 To install the ilishaper, choose a directory and extract the distribution file there. 
@@ -39,4 +39,5 @@ To build a binary distribution, use
     * rst2html location can be provided in file _user.properties_
 
 ## Documentation
-[docs/ilishaper.rst](docs/ilishaper.rst)
+* <https://docs.interlis.ch/ilishaper/>
+* [docs/ilishaper.rst](docs/ilishaper.rst)
