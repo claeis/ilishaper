@@ -69,6 +69,18 @@ der Konfiguration ``Beispiel1.ini`` ein vereinfachtes Modell
 
 ``java -jar ilishaper.jar --createModel --config Beispiel1.ini --out Derivatmodell.ili Basismodell.ili``
 
+In der Konfigurationsdatei muss konfiguriert werden, wie das vereinfachte Modell
+heissen soll::
+
+    [Basismodell]             # Name des Quellmodells
+    name=Derivatmodell        # Name des vereinfachten Modells
+    version=2023-01-01        # Version des vereinfachten Modells
+
+Einzelne Modellelemente, z.B. ein Attribut, können abgestreift werden::
+
+    [Basismodell.TopicT1.ClassA.Attr1]  # qualifizierter Name des Attributes
+    ignore=true                         # Flag, um das Attribut abzustreifen
+
 Daten-Konvertierungsfunktionen
 ------------------------------------
 
@@ -146,12 +158,33 @@ Konfiguration
 -------------
 Die Abbildung muss in einer Konfigurations-Datei definiert werden.
 
-Um z.B. ein Attribut abzustreifen
-schreibt man in der INI-Datei:
+Es muss konfiguriert werden, wie das vereinfachte Modell
+heissen soll::
 
-| [Basismodell.TopicT1.ClassA.Attr1]
-| ignore=true
+    [Basismodell]             # Name des Quellmodells
+    name=Derivatmodell        # Name des vereinfachten Modells
+    version=2023-01-01        # Version des vereinfachten Modells
 
+Einzelne Modellelemente, z.B. ein Attribut, können abgestreift werden::
+
+    [Basismodell.TopicT1.ClassA.Attr1]  # qualifizierter Name des Attributes
+    ignore=true                         # Flag, um das Attribut abzustreifen
+
+Es können auch ganze Klassen oder Topics abgestreift werden::
+
+    [Basismodell.TopicT1.ClassB]  # qualifizierter Name der Klasse
+    ignore=true
+
+    [Basismodell.TopicT2]         # qualifizierter Name des Topics
+    ignore=true
+
+Es können auch nur bestimmte Objekte gefiltert werden:: 
+
+    [Basismodell.TopicT1.ClassA]
+    filter="Attr5==#rot"
+
+Alle Objekte der Klasse ``ClassA`` welche im Attribut ``Attr5`` den Wert ``#rot`` haben
+(alle Objekte die die Filterbedingung erfüllen), werden in die Ausgabedatei geschrieben.
 
 INI-Konfigurationsdatei
 ~~~~~~~~~~~~~~~~~~~~~~~~
