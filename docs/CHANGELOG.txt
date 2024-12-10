@@ -1,6 +1,8 @@
 ilishaper 1.1.0 (2024-12-10)
 -------------------------------
 - add sender to XTF headersection (#2)
+- add filterModels to config file (#4)
+- ili2c-5.6.3+
 
 ilishaper 1.0.1 (2024-11-13)
 -------------------------------

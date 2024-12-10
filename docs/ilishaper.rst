@@ -255,6 +255,18 @@ INI-Konfigurationsdatei
 |                  |                          |   doc=Kommentar zum neuen Modell                                                  |
 |                  |                          |                                                                                   |
 +------------------+--------------------------+-----------------------------------------------------------------------------------+
+| ModelDef         | ::                       | Falls in den Filter-Ausdrücken Funktionen benutzt werden, die nicht schon         |
+|                  |                          | im Ausgangsmodell importiert werden, müssen diese hier definiert werden.          |
+|                  |  filterModels            |                                                                                   |
+|                  |                          |                                                                                   |
+|                  |                          | Beispiel                                                                          |
+|                  |                          |                                                                                   |
+|                  |                          | ::                                                                                |
+|                  |                          |                                                                                   |
+|                  |                          |   [Basismodell]                                                                   |
+|                  |                          |   filterModels=Text;Math                                                          |
+|                  |                          |                                                                                   |
++------------------+--------------------------+-----------------------------------------------------------------------------------+
 | TopicDef         | ::                       | Falls true wird das entsprechende Topic ignoriert.                                |
 |                  |                          |                                                                                   |
 |                  |  ignore                  |                                                                                   |

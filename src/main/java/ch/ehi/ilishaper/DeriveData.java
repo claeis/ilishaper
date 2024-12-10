@@ -10,6 +10,7 @@ import java.util.List;
 import ch.ehi.basics.logging.EhiLogger;
 import ch.ehi.basics.logging.ErrorTracker;
 import ch.ehi.basics.settings.Settings;
+import ch.interlis.ili2c.Ili2cSettings;
 import ch.interlis.ili2c.config.FileEntry;
 import ch.interlis.ili2c.config.FileEntryKind;
 import ch.interlis.ili2c.metamodel.Model;
@@ -134,6 +135,15 @@ public class DeriveData {
                     String destModel=trafoConfig.getConfigValue(modelName, IliGenerator.CONFIG_MODEL_NAME);
                     if(destModel!=null) {
                         ili2cConfig.addFileEntry(new FileEntry(destModel,FileEntryKind.ILIMODELFILE));
+                    }
+                    String filterModels=trafoConfig.getConfigValue(modelName, IliGenerator.CONFIG_MODEL_FILTER_MODELS);
+                    if(filterModels!=null) {
+                        String filterModelv[]=filterModels.split(Ili2cSettings.MODELS_SEPARATOR);
+                        for(String filterModel:filterModelv) {
+                            if(filterModel!=null) {
+                                ili2cConfig.addFileEntry(new FileEntry(filterModel,FileEntryKind.ILIMODELFILE));
+                            }
+                        }
                     }
                 }
             }

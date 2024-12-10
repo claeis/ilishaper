@@ -51,6 +51,7 @@ public class IliGenerator extends ch.interlis.ili2c.generator.Interlis2Generator
     public static final String CONFIG_MODEL_ISSUER = "issuer";
     public static final String CONFIG_MODEL_VERISON = "version";
     public static final String CONFIG_MODEL_DOC = "doc";
+    public static final String CONFIG_MODEL_FILTER_MODELS = "filterModels";
     public static final String CONFIG_VIEWABLE_FILTER = "filter";
     public static final String CONFIG_IGNORE = "ignore";
     private List<Model> srcModels=new ArrayList<Model>();
