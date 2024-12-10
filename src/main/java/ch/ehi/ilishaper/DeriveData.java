@@ -159,7 +159,8 @@ public class DeriveData {
                 
                 writerStat.setFilename(destFile.getPath());
                 {
-                    StartTransferEvent startEvent=new ch.interlis.iox_j.StartTransferEvent();
+                    ch.interlis.iox_j.StartTransferEvent startEvent=new ch.interlis.iox_j.StartTransferEvent();
+                    startEvent.setSender(Main.getVersion());
                     ioxWriter.write(startEvent);
                     writerStat.add(startEvent);
                 }
