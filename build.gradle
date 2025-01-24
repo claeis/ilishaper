@@ -33,9 +33,9 @@ configurations.all {
 dependencies {
     implementation group: 'ch.ehi', name: 'ehibasics', version: '1.4.1'
     implementation group: 'ch.interlis', name: 'iox-api', version: '1.0.4'
-    implementation group: 'ch.interlis', name: 'iox-ili', version: '1.23.2'
-    implementation group: 'ch.interlis', name: 'ili2c-tool', version: "5.6.3+"
-    implementation group: 'ch.interlis', name: 'ili2c-core', version: "5.6.3+"
+    implementation group: 'ch.interlis', name: 'iox-ili', version: '1.23.4'
+    implementation group: 'ch.interlis', name: 'ili2c-tool', version: "5.6.3"
+    implementation group: 'ch.interlis', name: 'ili2c-core', version: "5.6.3"
 
     testImplementation 'junit:junit:4.12'
     testImplementation group: 'ch.interlis', name: 'ilivalidator', version: "1.12.1"

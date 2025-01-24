@@ -127,26 +127,7 @@ public class DeriveData {
             EhiLogger.traceState("read source models...");
             ch.interlis.ili2c.config.Configuration ili2cConfig =new ch.interlis.ili2c.config.Configuration();
             ili2cConfig.setAutoCompleteModelList(true);
-            for(String entry:trafoConfig.getIliQnames()) {
-                if(!entry.contains(".")) {
-                    String modelName=entry;
-                    EhiLogger.logState("srcModel <"+modelName+">");
-                    ili2cConfig.addFileEntry(new FileEntry(modelName,FileEntryKind.ILIMODELFILE));
-                    String destModel=trafoConfig.getConfigValue(modelName, IliGenerator.CONFIG_MODEL_NAME);
-                    if(destModel!=null) {
-                        ili2cConfig.addFileEntry(new FileEntry(destModel,FileEntryKind.ILIMODELFILE));
-                    }
-                    String filterModels=trafoConfig.getConfigValue(modelName, IliGenerator.CONFIG_MODEL_FILTER_MODELS);
-                    if(filterModels!=null) {
-                        String filterModelv[]=filterModels.split(Ili2cSettings.MODELS_SEPARATOR);
-                        for(String filterModel:filterModelv) {
-                            if(filterModel!=null) {
-                                ili2cConfig.addFileEntry(new FileEntry(filterModel,FileEntryKind.ILIMODELFILE));
-                            }
-                        }
-                    }
-                }
-            }
+            addModelsFromConfigFile(ili2cConfig, trafoConfig,true);
             if(ili2cConfig.getSizeFileEntry()==0){
                 EhiLogger.logError("no source models given in config file");
                 return ret;
@@ -157,6 +138,10 @@ public class DeriveData {
                 return ret;
             }
             
+            if(!CreateModel.validateConfigFile(td,trafoConfig,true)) {
+                EhiLogger.logError("config file <"+configFilename+"> contains errors");
+                return ret;
+            }
             
             IoxStatistics readerStat=new IoxStatistics(td,settings);
             IoxStatistics writerStat=new IoxStatistics(td,settings);
@@ -271,6 +256,31 @@ public class DeriveData {
 		
 		return ret;
 	}
+    static public void addModelsFromConfigFile(ch.interlis.ili2c.config.Configuration ili2cConfig,
+            ValidationConfig trafoConfig,boolean includeDestinationModel) {
+        for(String entry:trafoConfig.getIliQnames()) {
+            if(!entry.contains(".")) {
+                String modelName=entry;
+                EhiLogger.logState("srcModel <"+modelName+">");
+                ili2cConfig.addFileEntry(new FileEntry(modelName,FileEntryKind.ILIMODELFILE));
+                if(includeDestinationModel) {
+                    String destModel=trafoConfig.getConfigValue(modelName, IliGenerator.CONFIG_MODEL_NAME);
+                    if(destModel!=null) {
+                        ili2cConfig.addFileEntry(new FileEntry(destModel,FileEntryKind.ILIMODELFILE));
+                    }
+                }
+                String filterModels=trafoConfig.getConfigValue(modelName, IliGenerator.CONFIG_MODEL_FILTER_MODELS);
+                if(filterModels!=null) {
+                    String filterModelv[]=filterModels.split(Ili2cSettings.MODELS_SEPARATOR);
+                    for(String filterModel:filterModelv) {
+                        if(filterModel!=null) {
+                            ili2cConfig.addFileEntry(new FileEntry(filterModel,FileEntryKind.ILIMODELFILE));
+                        }
+                    }
+                }
+            }
+        }
+    }
     public static boolean isWriteable(File f) throws IOException {
         f.createNewFile();
         return f.canWrite();
