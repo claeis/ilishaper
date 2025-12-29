@@ -1,3 +1,11 @@
+ilishaper 1.1.0 (2025-12-29)
+-------------------------------
+- add sender to XTF headersection (#2)
+- add filterModels to config file (#4)
+- Unerfuellte Referenzen vom ini ins ili sollten Fehler werfen (#7)
+- ili2c-5.6.8
+- iox-ili-1.24.4
+
 ilishaper 1.0.1 (2024-11-13)
 -------------------------------
 - ili2c-5.6.1

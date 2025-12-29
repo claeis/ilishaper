@@ -30,7 +30,6 @@ import ch.interlis.iox_j.validator.ValidationConfig;
 
 public class ConfigTest {
     private static final String TEST_DATA="src/test/data/Acceptance/";
-    private static final String CONFIG_FILE=TEST_DATA+"config.ini";
     private static final String OUT_FOLDER = "build/out";
 
     @org.junit.BeforeClass
@@ -39,10 +38,55 @@ public class ConfigTest {
     }
     @Test
     public void filter() throws Exception {
+        final String CONFIG_FILE=TEST_DATA+"config.ini";
         ValidationConfig trafoConfig = null;
         trafoConfig = IniFileReader.readFile(new File(CONFIG_FILE));
         String filter=trafoConfig.getConfigValue("Basismodell.TopicT1.ClassA",IliGenerator.CONFIG_VIEWABLE_FILTER);
         assertEquals("Attr5==#rot",filter);
+    }
+    @Test
+    public void wrongModelName_fail() throws Exception {
+        //EhiLogger.getInstance().setTraceFilter(false);
+        final String CONFIG_FILE=TEST_DATA+"configWrongModelName_fail.ini";
+        Settings settings = new Settings();
+        settings.setValue(Main.SETTING_ILIDIRS, TEST_DATA+Ili2cSettings.ILIDIR_SEPARATOR+Ili2cSettings.DEFAULT_ILIDIRS);
+        settings.setValue(Main.SETTING_CONFIGFILE, CONFIG_FILE);
+        final File resultIli = new File(OUT_FOLDER,"ConfigTest_wrongModelName_fail.ili");
+        boolean ret = new CreateModel().createModel(resultIli,null,settings);
+        assertFalse(ret);
+    }
+    @Test
+    public void wrongTopicName_fail() throws Exception {
+        //EhiLogger.getInstance().setTraceFilter(false);
+        final String CONFIG_FILE=TEST_DATA+"configWrongTopicName_fail.ini";
+        Settings settings = new Settings();
+        settings.setValue(Main.SETTING_ILIDIRS, TEST_DATA+Ili2cSettings.ILIDIR_SEPARATOR+Ili2cSettings.DEFAULT_ILIDIRS);
+        settings.setValue(Main.SETTING_CONFIGFILE, CONFIG_FILE);
+        final File resultIli = new File(OUT_FOLDER,"ConfigTest_wrongTopicName_fail.ili");
+        boolean ret = new CreateModel().createModel(resultIli,null,settings);
+        assertFalse(ret);
+    }
+    @Test
+    public void wrongAttrName_fail() throws Exception {
+        //EhiLogger.getInstance().setTraceFilter(false);
+        final String CONFIG_FILE=TEST_DATA+"configWrongAttrName_fail.ini";
+        Settings settings = new Settings();
+        settings.setValue(Main.SETTING_ILIDIRS, TEST_DATA+Ili2cSettings.ILIDIR_SEPARATOR+Ili2cSettings.DEFAULT_ILIDIRS);
+        settings.setValue(Main.SETTING_CONFIGFILE, CONFIG_FILE);
+        final File resultIli = new File(OUT_FOLDER,"ConfigTest_wrongAttrName_fail.ili");
+        boolean ret = new CreateModel().createModel(resultIli,null,settings);
+        assertFalse(ret);
+    }
+    @Test
+    public void wrongAttrNameInFilter_fail() throws Exception {
+        //EhiLogger.getInstance().setTraceFilter(false);
+        final String CONFIG_FILE=TEST_DATA+"configWrongAttrNameInFilter_fail.ini";
+        Settings settings = new Settings();
+        settings.setValue(Main.SETTING_ILIDIRS, TEST_DATA+Ili2cSettings.ILIDIR_SEPARATOR+Ili2cSettings.DEFAULT_ILIDIRS);
+        settings.setValue(Main.SETTING_CONFIGFILE, CONFIG_FILE);
+        final File resultIli = new File(OUT_FOLDER,"ConfigTest_wrongAttrNameInFilter_fail.ili");
+        boolean ret = new CreateModel().createModel(resultIli,null,settings);
+        assertFalse(ret);
     }
 
 }

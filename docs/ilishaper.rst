@@ -69,6 +69,18 @@ der Konfiguration ``Beispiel1.ini`` ein vereinfachtes Modell
 
 ``java -jar ilishaper.jar --createModel --config Beispiel1.ini --out Derivatmodell.ili Basismodell.ili``
 
+In der Konfigurationsdatei muss konfiguriert werden, wie das vereinfachte Modell
+heissen soll::
+
+    [Basismodell]             # Name des Quellmodells
+    name=Derivatmodell        # Name des vereinfachten Modells
+    version=2023-01-01        # Version des vereinfachten Modells
+
+Einzelne Modellelemente, z.B. ein Attribut, können abgestreift werden::
+
+    [Basismodell.TopicT1.ClassA.Attr1]  # qualifizierter Name des Attributes
+    ignore=true                         # Flag, um das Attribut abzustreifen
+
 Daten-Konvertierungsfunktionen
 ------------------------------------
 
@@ -119,9 +131,9 @@ Optionen:
 |                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 |                                             | %ITF\_DIR ist ein Platzhalter für das Verzeichnis mit der Transferdatei.                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 |                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-|                                             | %JAR\_DIR ist ein Platzhalter für das Verzeichnis des ilivalidator Programms (ilivalidator.jar Datei).                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+|                                             | %JAR\_DIR ist ein Platzhalter für das Verzeichnis des ilishaper Programms (ilishaper.jar Datei).                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 |                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-|                                             | Der erste Modellname (Hauptmodell), zu dem ili2db die ili-Datei sucht, ist nicht von der INTERLIS-Sprachversion abhängig. Es wird in folgender Reihenfolge nach einer ili-Datei gesucht: zuerst INTERLIS 2.3, dann 1.0 und zuletzt 2.2.                                                                                                                                                                                                                                                                                                |
+|                                             | Der erste Modellname (Hauptmodell), zu dem ilishaper die ili-Datei sucht, ist nicht von der INTERLIS-Sprachversion abhängig. Es wird in folgender Reihenfolge nach einer ili-Datei gesucht: zuerst INTERLIS 2.3, dann 1.0 und zuletzt 2.2.                                                                                                                                                                                                                                                                                             |
 |                                             |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 |                                             | Beim Auflösen eines IMPORTs wird die INTERLIS Sprachversion des Hauptmodells berücksichtigt, so dass also z.B. das Modell Units für ili2.2 oder ili2.3 unterschieden wird.                                                                                                                                                                                                                                                                                                                                                             |
 +---------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -146,12 +158,33 @@ Konfiguration
 -------------
 Die Abbildung muss in einer Konfigurations-Datei definiert werden.
 
-Um z.B. ein Attribut abzustreifen
-schreibt man in der INI-Datei:
+Es muss konfiguriert werden, wie das vereinfachte Modell
+heissen soll::
 
-| [Basismodell.TopicT1.ClassA.Attr1]
-| ignore=true
+    [Basismodell]             # Name des Quellmodells
+    name=Derivatmodell        # Name des vereinfachten Modells
+    version=2023-01-01        # Version des vereinfachten Modells
 
+Einzelne Modellelemente, z.B. ein Attribut, können abgestreift werden::
+
+    [Basismodell.TopicT1.ClassA.Attr1]  # qualifizierter Name des Attributes
+    ignore=true                         # Flag, um das Attribut abzustreifen
+
+Es können auch ganze Klassen oder Topics abgestreift werden::
+
+    [Basismodell.TopicT1.ClassB]  # qualifizierter Name der Klasse
+    ignore=true
+
+    [Basismodell.TopicT2]         # qualifizierter Name des Topics
+    ignore=true
+
+Es können auch nur bestimmte Objekte gefiltert werden:: 
+
+    [Basismodell.TopicT1.ClassA]
+    filter="Attr5==#rot"
+
+Alle Objekte der Klasse ``ClassA`` welche im Attribut ``Attr5`` den Wert ``#rot`` haben
+(alle Objekte die die Filterbedingung erfüllen), werden in die Ausgabedatei geschrieben.
 
 INI-Konfigurationsdatei
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -220,6 +253,18 @@ INI-Konfigurationsdatei
 |                  |                          |                                                                                   |
 |                  |                          |   [Basismodell]                                                                   |
 |                  |                          |   doc=Kommentar zum neuen Modell                                                  |
+|                  |                          |                                                                                   |
++------------------+--------------------------+-----------------------------------------------------------------------------------+
+| ModelDef         | ::                       | Falls in den Filter-Ausdrücken Funktionen benutzt werden, die nicht schon         |
+|                  |                          | im Ausgangsmodell importiert werden, müssen diese hier definiert werden.          |
+|                  |  filterModels            |                                                                                   |
+|                  |                          |                                                                                   |
+|                  |                          | Beispiel                                                                          |
+|                  |                          |                                                                                   |
+|                  |                          | ::                                                                                |
+|                  |                          |                                                                                   |
+|                  |                          |   [Basismodell]                                                                   |
+|                  |                          |   filterModels=Text;Math                                                          |
 |                  |                          |                                                                                   |
 +------------------+--------------------------+-----------------------------------------------------------------------------------+
 | TopicDef         | ::                       | Falls true wird das entsprechende Topic ignoriert.                                |

@@ -4,7 +4,7 @@ plugins {
 
 }
 
-version '1.0.1'+System.getProperty('release','-SNAPSHOT')
+version '1.1.0'+System.getProperty('release','-SNAPSHOT')
 group 'ch.ehi'
 
 configurations {
@@ -25,17 +25,17 @@ targetCompatibility = JavaVersion.VERSION_1_8
 compileJava.options.encoding = 'US-ASCII'
 
 // to get the latest SNAPSHOT uncomment the following lines
-//configurations.all {
+configurations.all {
     // check for updates every build
-    // resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-//}
+     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
 
 dependencies {
     implementation group: 'ch.ehi', name: 'ehibasics', version: '1.4.1'
     implementation group: 'ch.interlis', name: 'iox-api', version: '1.0.4'
-    implementation group: 'ch.interlis', name: 'iox-ili', version: '1.23.2'
-    implementation group: 'ch.interlis', name: 'ili2c-tool', version: "5.6.1"
-    implementation group: 'ch.interlis', name: 'ili2c-core', version: "5.6.1"
+    implementation group: 'ch.interlis', name: 'iox-ili', version: '1.24.4'
+    implementation group: 'ch.interlis', name: 'ili2c-tool', version: "5.6.8"
+    implementation group: 'ch.interlis', name: 'ili2c-core', version: "5.6.8"
 
     testImplementation 'junit:junit:4.12'
     testImplementation group: 'ch.interlis', name: 'ilivalidator', version: "1.12.1"
